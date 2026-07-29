@@ -1,0 +1,57 @@
+
+{% extends "base.html" %}
+{% block content %}
+<h1>Import from GitHub</h1>
+
+<div class="card">
+    <div id="repos-loading">Loading repositories...</div>
+    <div id="repos-list"></div>
+</div>
+
+<script>
+async function loadRepos() {
+    const response = await fetch('/api/github/repos');
+    const data = await response.json();
+    
+    const loading = document.getElementById('repos-loading');
+    const list = document.getElementById('repos-list');
+    
+    loading.style.display = 'none';
+    
+    if (data.repos && data.repos.length > 0) {
+        data.repos.forEach(repo => {
+            const div = document.createElement('div');
+            div.className = 'flex justify-between items-center';
+            div.innerHTML = `
+                <div>
+                    <strong>${repo.name}</strong>
+                    <p class="text-secondary" style="font-size: 12px">${repo.owner?.login || 'unknown'}</p>
+                </div>
+                <button class="btn btn-secondary" onclick="importRepo('${repo.owner?.login}/${repo.name}')">Import</button>
+            `;
+            div.style.cssText = 'padding: 12px 0; border-bottom: 1px solid #2A2D33;';
+            list.appendChild(div);
+        });
+    } else {
+        list.innerHTML = '<p class="text-secondary">No repositories found.</p>';
+    }
+}
+
+async function importRepo(repoId) {
+    const response = await fetch('/api/github/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ repo_id: repoId })
+    });
+    const data = await response.json();
+    
+    if (data.success) {
+        alert('Imported ' + repoId + ' to ' + data.path);
+    } else {
+        alert('Import failed: ' + data.error);
+    }
+}
+
+loadRepos();
+</script>
+{% endblock %}

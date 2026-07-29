@@ -1,0 +1,40 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="inline-form">
+    <h1>Describe an idea</h1>
+    <p class="text-secondary mb-24">What do you want to build? Be as specific or general as you like.</p>
+    
+    <form id="idea-form">
+        <textarea id="idea-text" class="input" placeholder="A web app that helps people track their daily habits with reminders and streak tracking..."></textarea>
+        
+        <div class="mt-24">
+            <button type="submit" id="submit-btn" class="btn" disabled>Analyze</button>
+        </div>
+    </form>
+</div>
+
+<script>
+const textarea = document.getElementById('idea-text');
+const submitBtn = document.getElementById('submit-btn');
+
+textarea.addEventListener('input', () => {
+    submitBtn.disabled = !textarea.value.trim();
+});
+
+document.getElementById('idea-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Analyzing...';
+    
+    const response = await fetch('/analyze-idea', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idea_text: textarea.value })
+    });
+    
+    const data = await response.json();
+    window.location.href = `/project/${data.project_id}/questions`;
+});
+</script>
+{% endblock %}

@@ -1,0 +1,102 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="top-bar">
+    <h1>{{ project.name }}</h1>
+    <span class="badge badge-progress">{{ project.phase }}</span>
+</div>
+
+<div class="tab-bar">
+    <div class="tab active" data-tab="activity">Activity</div>
+    <div class="tab" data-tab="preview">Preview</div>
+    <div class="tab" data-tab="diffs">Diffs</div>
+    <div class="tab" data-tab="tests">Tests</div>
+    <div class="tab" data-tab="cost">Cost</div>
+</div>
+
+<div id="tab-content">
+    <div class="tab-panel" id="panel-activity">
+        <div class="activity-stream" id="activity-stream">
+            {% for entry in project.activity %}
+            <div class="log-entry log-{{ entry.role }}">
+                <span class="text-secondary">{{ entry.timestamp }}</span> {{ entry.message }}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="mt-16">
+            <input type="text" id="direct-input" class="input" placeholder="Direct the build...">
+            <button id="direct-btn" class="btn mt-16">Send</button>
+        </div>
+    </div>
+    
+    <div class="tab-panel" id="panel-preview" style="display: none;">
+        <div class="code-preview">
+# Preview will appear here as tasks complete
+
+{{ project.idea_text }}
+        </div>
+    </div>
+    
+    <div class="tab-panel" id="panel-diffs" style="display: none;">
+        <div class="text-secondary">No diffs yet — check back as tasks complete.</div>
+    </div>
+    
+    <div class="tab-panel" id="panel-tests" style="display: none;">
+        <div class="card mb-16">
+            <div class="flex justify-between">
+                <span>Acceptance</span>
+                <span class="badge badge-success">0 passed</span>
+            </div>
+        </div>
+        <div class="text-secondary">Tests will appear as the build progresses.</div>
+    </div>
+    
+    <div class="tab-panel" id="panel-cost" style="display: none;">
+        <div class="progress-bar" style="height: 8px;">
+            <div class="progress-fill" style="width: 0%"></div>
+        </div>
+        <p class="text-secondary mt-16">$0.00 spent of $10.00 cap</p>
+    </div>
+</div>
+
+<script>
+// Tab switching
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+        document.getElementById('panel-' + tab.dataset.tab).style.display = 'block';
+    });
+});
+
+// Direct the build
+document.getElementById('direct-btn').addEventListener('click', async () => {
+    const input = document.getElementById('direct-input');
+    const message = input.value.trim();
+    if (!message) return;
+    
+    await fetch('/project/{{ project.id }}/direct', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+    });
+    
+    // Add to stream
+    const stream = document.getElementById('activity-stream');
+    const entry = document.createElement('div');
+    entry.className = 'log-entry log-user';
+    entry.innerHTML = `<span class="text-secondary">${new Date().toISOString()}</span> Directed: ${message}`;
+    stream.appendChild(entry);
+    input.value = '';
+});
+
+// Poll for activity updates
+setInterval(async () => {
+    const response = await fetch('/project/{{ project.id }}/activity');
+    const data = await response.json();
+    // Update activity stream
+}, 5000);
+</script>
+{% endblock %}

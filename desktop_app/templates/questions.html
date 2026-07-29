@@ -1,0 +1,68 @@
+
+{% extends "base.html" %}
+{% block content %}
+<h1>Clarifying Questions</h1>
+<p class="text-secondary mb-24">{{ project.name }}</p>
+
+<div class="section-title">Needs your input</div>
+{% for q in project.questions if q.tier == 'blocking' %}
+<div class="question-item">
+    <div class="question-text">{{ q.text }}</div>
+    <div class="question-hint">{{ q.why_it_matters }}</div>
+    {% if q.type == 'select' %}
+    <select class="input question-input" data-question="{{ q.id }}" data-required="true">
+        <option value="">Select an option...</option>
+        {% for opt in q.options %}
+        <option value="{{ opt }}">{{ opt }}</option>
+        {% endfor %}
+    </select>
+    {% else %}
+    <input type="text" class="input question-input" data-question="{{ q.id }}" data-required="true" placeholder="Your answer...">
+    {% endif %}
+</div>
+{% endfor %}
+
+<div class="mt-24">
+    <button id="start-btn" class="btn" disabled>Start building</button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = document.querySelectorAll('.question-input');
+    const startBtn = document.getElementById('start-btn');
+    const answers = {};
+
+    function checkComplete() {
+        let allAnswered = true;
+        inputs.forEach(input => {
+            const isRequired = input.dataset.required === 'true';
+            if (isRequired) {
+                const value = input.value.trim();
+                if (!value) allAnswered = false;
+                answers[input.dataset.question] = value;
+            }
+        });
+        startBtn.disabled = !allAnswered;
+    }
+
+    inputs.forEach(input => {
+        input.addEventListener('input', checkComplete);
+        input.addEventListener('change', checkComplete);
+    });
+
+    startBtn.addEventListener('click', async () => {
+        if (startBtn.disabled) return;
+        startBtn.disabled = true;
+        startBtn.textContent = 'Starting...';
+        
+        await fetch('/project/{{ project.id }}/answer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ answers })
+        });
+        
+        window.location.href = '/project/{{ project.id }}';
+    });
+});
+</script>
+{% endblock %}

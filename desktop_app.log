@@ -1,0 +1,35 @@
+nohup: ignoring input
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.2.68.12:5000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [29/Jul/2026 21:54:01] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jul/2026 21:54:02] "GET /new-project HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jul/2026 21:54:04] "POST /analyze-idea HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jul/2026 21:54:04] "GET /project/proj_1/questions HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jul/2026 21:54:04] "POST /project/proj_1/answer HTTP/1.1" 200 -
+127.0.0.1 - - [29/Jul/2026 21:54:04] "GET /import/github HTTP/1.1" 200 -
+[2026-07-29 21:54:04,189] ERROR in app: Exception on /api/github/repos [GET]
+Traceback (most recent call last):
+  File "/home/openhands/.local/lib/python3.13/site-packages/flask/app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/openhands/.local/lib/python3.13/site-packages/flask/app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/openhands/.local/lib/python3.13/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/openhands/.local/lib/python3.13/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/openhands/.local/lib/python3.13/site-packages/flask/app.py", line 976, in ensure_sync
+    return self.async_to_sync(func)
+           ~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/openhands/.local/lib/python3.13/site-packages/flask/app.py", line 997, in async_to_sync
+    raise RuntimeError(
+        "Install Flask with the 'async' extra in order to use async views."
+    ) from None
+RuntimeError: Install Flask with the 'async' extra in order to use async views.
+127.0.0.1 - - [29/Jul/2026 21:54:04] "[35m[1mGET /api/github/repos HTTP/1.1[0m" 500 -
+127.0.0.1 - - [29/Jul/2026 21:54:04] "GET /settings HTTP/1.1" 200 -

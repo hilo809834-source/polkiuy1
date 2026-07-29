@@ -1,0 +1,42 @@
+
+{% extends "base.html" %}
+{% block content %}
+<h1>Settings</h1>
+
+<div class="card mb-24">
+    <h2 class="mb-16">Model Routing</h2>
+    <table style="width: 100%;">
+        <tr>
+            <td style="padding: 8px 0;">Fast</td>
+            <td><input type="text" class="input" value="groq/llama-3.1-8b-instant" readonly></td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0;">Mid</td>
+            <td><input type="text" class="input" value="groq/llama-3.3-70b-versatile" readonly></td>
+        </tr>
+        <tr>
+            <td style="padding: 8px 0;">Frontier</td>
+            <td><input type="text" class="input" value="anthropic/claude-3-5-sonnet" readonly></td>
+        </tr>
+    </table>
+</div>
+
+<div class="card mb-24">
+    <h2 class="mb-16">API Keys</h2>
+    <p class="text-secondary">Groq API key configured</p>
+</div>
+
+<div class="card mb-24">
+    <h2 class="mb-16">Cost Caps</h2>
+    <label class="text-secondary">Default cap per project</label>
+    <input type="number" class="input mt-16" value="10.00">
+</div>
+
+<div class="card">
+    <h2 class="mb-16">Integrations</h2>
+    <div class="flex items-center justify-between">
+        <span>GitHub</span>
+        <button class="btn btn-secondary">Connect</button>
+    </div>
+</div>
+{% endblock %}
