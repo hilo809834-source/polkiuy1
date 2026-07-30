@@ -275,27 +275,48 @@ Loop halted: TRUE
 The runaway loop was BLOCKED after reaching the cost cap.
 ```
 
-### Part 2: Deployment, Health Check & Rollback (REAL - PASS)
-```
---- Deployment & Health Check Test (2026-07-30 04:20 UTC) ---
-1. Deployed v1.0.0 to staging: HEALTHY ✓
-2. Deployed v2.0.0 to staging: HEALTHY ✓
-3. FORCED health check failure: server returned 503
-4. Detected failure: health_status = unhealthy
-5. TRIGGERED rollback: rollback-v1.0.0
-6. Post-rollback health check: HEALTHY ✓
+### Part 2: REAL External Staging Deployment (2026-07-30 13:59 UTC) — PASS
 
-Evidence:
-- Staging environment: http://localhost:8080
-- Current version: v1.0.0
-- Deployment history: 3 deployments
+**External Staging URL: https://deserve-exist-washer-kit.trycloudflare.com**
+
+```
+PHASE 9 - REAL EXTERNAL DEPLOYMENT TEST
+
+[1] Initial health check...
+    ✓ Staging is HEALTHY (status: 200)
+
+[2] Deployed v1.0.0...
+    ✓ Deployed: {"version": "v1.0.0", "timestamp": "...", "status": "deployed"}
+
+[3] Deployed v2.0.0...
+    ✓ Deployed: {"version": "v2.0.0", "timestamp": "...", "status": "deployed"}
+
+[4] FORCING HEALTH CHECK FAILURE...
+    ✓ Toggle result: {"http_code": 503, "status": "unhealthy"}
+
+[5] Running health check after failure injection...
+    ✓ Detected UNHEALTHY status (HTTP 503)
+
+[6] TRIGGERING ROLLBACK...
+    ✓ Rollback successful: {"version": "rollback-v1.0.0", ...}
+
+[7] Toggling back to healthy state...
+    ✓ Toggle result: {"http_code": 200, "status": "healthy"}
+
+[8] Verifying health after rollback...
+    ✓ Post-rollback health check: HEALTHY
+
+Evidence URLs:
+- External staging: https://deserve-exist-washer-kit.trycloudflare.com
+- Health check: https://deserve-exist-washer-kit.trycloudflare.com/health
+- Toggle failure: https://deserve-exist-washer-kit.trycloudflare.com/toggle-health
 ```
 
 **Status:**
-1. Cost cap halts loop: YES (real evidence above)
-2. Staging deployment: YES (services/deploy/deploy_service.py)
-3. Health check failure detection: YES (503 status)
-4. Rollback mechanism: YES (rolls back to previous healthy version)
+1. Cost cap halts loop: YES (verified)
+2. Real external staging deployment: YES (trycloudflare.com URL)
+3. Health check failure detection: YES (HTTP 503)
+4. Rollback mechanism: YES (rollback-v1.0.0)
 
 
 ## Phase 10 — Existing codebases (2026-07-29) — COMPLETE
