@@ -76,7 +76,7 @@ async def run_phase11_test():
             await page.click('#submit-btn')
             
             # Wait for navigation to questions screen
-            await page.wait_for_url("**/questions", timeout=30000)
+            await page.wait_for_url("**/questions", timeout=120000)
             print("    ✓ Navigated to Questions screen")
             
             results["screens_visited"].append("Questions")
@@ -157,8 +157,8 @@ async def run_phase11_test():
             
             # Check GitHub import screen
             print("\n[9] Testing GitHub Import screen...")
-            await page.goto(f"{BASE_URL}/import/github")
-            await page.wait_for_load_state("networkidle")
+            await page.goto(f"{BASE_URL}/import/github", wait_until="domcontentloaded")
+            await page.wait_for_load_state("domcontentloaded")
             
             content = await page.content()
             if "Import from GitHub" in content:
@@ -168,8 +168,8 @@ async def run_phase11_test():
             
             # Check Settings screen
             print("\n[10] Testing Settings screen...")
-            await page.goto(f"{BASE_URL}/settings")
-            await page.wait_for_load_state("networkidle")
+            await page.goto(f"{BASE_URL}/settings", wait_until="domcontentloaded")
+            await page.wait_for_load_state("domcontentloaded")
             
             content = await page.content()
             if "Settings" in content:

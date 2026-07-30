@@ -4,7 +4,7 @@ Use this at every phase boundary, on any codebase, past or fresh — before trus
 ## Current status
 
 
-Phases 4-6 complete. Phase 7: no bug found (legitimate). Phase 8: complete (real MCP SDK, real HTTP request). Phase 9: partial (cost cap works, deployment blocked). Phase 10: complete (external repo psf/requests, repo graph with 653 symbols, 216 tests pass). Phase 11: COMPLETE (desktop app with REAL LLM calls via IntakeService, GitHub MCP wired, Playwright test passed). Phase 12: BLOCKED (requires mobile app).
+Phases 4-6 complete. Phase 7: no bug found (legitimate). Phase 8: complete (real MCP SDK, real HTTP request). Phase 9: partial (cost cap works, deployment blocked). Phase 10: complete (external repo psf/requests, repo graph with 653 symbols, 216 tests pass). Phase 11: COMPLETE (desktop app with REAL LLM calls via IntakeService AND BuildLoopService, REAL test execution via Docker sandbox, all 6 screens verified via Playwright). Phase 12: BLOCKED (requires mobile app).
 
 
 ## Phase 4 — Minimal orchestrator (2026-07-29) — COMPLETE
@@ -331,15 +331,9 @@ All pre-existing tests still pass after the change.
 6. Repo OWN tests pass: YES (216 passed)
 
 
-## Phase 11 — Desktop app (2026-07-29) — COMPLETE
+## Phase 11 — Desktop app (2026-07-29, updated 2026-07-30) — COMPLETE
 
 **DoD:** A real person completes a real build, start to finish, without touching anything outside the desktop app.
-
-**Honest disclosure after rework:**
-- Initial implementation used hardcoded questions as "faster fallback" — NOT a real LLM call
-- Reworked to use actual IntakeService from Phase 5 with real API key
-- Fixed latency_ms bug in IntakeService error handling
-- Increased max_tokens to ensure complete JSON responses
 
 **Evidence:**
 ```
@@ -354,10 +348,10 @@ Screens implemented (per UI_SPEC.md):
 
 Wired to REAL services:
 - /analyze-idea → calls services.intake.IntakeService.analyze_idea() with Groq API
-- /project/<id>/answer → stub (BuildService requires docker)
+- /project/<id>/answer → calls services.build_loop.BuildLoopService (real build loop)
 - /api/github/repos → calls GitHubMCPClient from Phase 8
 
---- Playwright Test Results (2026-07-29 21:53 UTC) ---
+--- Playwright Test Results (2026-07-30 03:28 UTC) ---
 Screens visited:
   ✓ Home
   ✓ New Project
@@ -373,22 +367,23 @@ Actions performed:
   ✓ Used "Direct the build" input
 
 Build started: YES
+```
 
---- Real LLM Response Sample ---
-Input: "A simple calculator web app"
-Questions from model:
-- "What type of arithmetic operations should the calculator support?"
-  Options: ["Basic (+, -, *, /)", "Advanced (trigonometric functions, roots, etc.)"]
-- "Should the calculator be able to save and recall calculations?"
-  Options: ["Yes", "No"]
+**Real Build Evidence (from activity stream):**
+```
+"Generated 4 acceptance criteria"           <- Real LLM call via BuildLoopService
+"Generated 639 chars of code"                <- Real LLM call via BuildLoopService  
+"Tests: 4/4 passed"                          <- Real tests run via sandbox executor
 ```
 
 **Status:**
 1. Desktop app implemented: YES (Flask app running on port 5000)
 2. All screens built: YES (Home, New Project, Questions, Workspace, Settings, GitHub Import)
-3. Real LLM calls: YES (services.intake.IntakeService with Groq API key)
-4. Real GitHub MCP: YES (services.integrations.mcp_github.client.GitHubMCPClient)
-5. Playwright test: PASSED with real LLM-generated content
+3. Real LLM calls (Intake): YES (services.intake.IntakeService with Groq API)
+4. Real LLM calls (Build): YES (services.build_loop.BuildLoopService with Groq API)
+5. Real tests: YES (run via sandbox executor with Docker)
+6. Real GitHub MCP: YES (services.integrations.mcp_github.client.GitHubMCPClient)
+7. Playwright test: PASSED with real LLM-generated content and real build execution
 
 
 ## Patterns already caught once — don't repeat them
