@@ -4,90 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Questions - AI Dev Studio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #0E0F12;
-            color: #E8E9EB;
-            font-size: 14px;
-        }
-        .header { 
-            background: #17191D; 
-            border-bottom: 1px solid #2A2D33;
-            color: #E8E9EB; 
-            padding: 16px; 
-            position: sticky; 
-            top: 0; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-        }
-        .back { color: #E8E9EB; text-decoration: none; font-size: 20px; }
-        .header h1 { font-size: 18px; font-weight: 600; }
-        .progress { 
-            display: flex; 
-            justify-content: center; 
-            gap: 6px; 
-            padding: 12px; 
-            background: #17191D;
-            border-bottom: 1px solid #2A2D33;
-        }
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: #2A2D33; }
-        .dot.active { background: #6366F1; }
-        .dot.done { background: #22C55E; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        .header { background: #1a1a2e; color: white; padding: 16px; position: sticky; top: 0; display: flex; align-items: center; gap: 12px; }
+        .back { color: white; text-decoration: none; font-size: 20px; }
+        .header h1 { font-size: 18px; }
+        .progress { display: flex; justify-content: center; gap: 6px; padding: 12px; background: white; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; }
+        .dot.active { background: #1a1a2e; }
+        .dot.done { background: #4caf50; }
         .container { padding: 16px; }
-        .question-card { 
-            background: #17191D; 
-            border: 1px solid #2A2D33;
-            border-radius: 12px; 
-            padding: 20px; 
-        }
-        .question-text { font-size: 18px; font-weight: 500; margin-bottom: 16px; color: #E8E9EB; }
-        .question-hint { 
-            font-size: 13px; 
-            color: #9A9DA6; 
-            margin-bottom: 16px; 
-            padding: 8px; 
-            background: #0E0F12; 
-            border-radius: 4px; 
-        }
+        .question-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .question-text { font-size: 18px; font-weight: 500; margin-bottom: 16px; color: #333; }
+        .question-hint { font-size: 13px; color: #666; margin-bottom: 16px; padding: 8px; background: #f5f5f5; border-radius: 4px; }
         .options { display: flex; flex-direction: column; gap: 10px; }
-        .option { 
-            padding: 14px 16px; 
-            border: 2px solid #2A2D33; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            transition: all 0.2s;
-            background: #0E0F12;
-            color: #E8E9EB;
-        }
-        .option:hover { border-color: #6366F1; }
-        .option.selected { border-color: #6366F1; background: #17191D; }
-        .option input { margin-right: 8px; }
-        .btn { 
-            width: 100%; 
-            padding: 16px; 
-            background: #6366F1; 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            font-size: 16px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            margin-top: 20px; 
-        }
-        .btn:disabled { 
-            background: #2A2D33;
-            color: #9A9DA6;
-        }
-        .auto-filled-badge {
-            font-size: 11px;
-            text-transform: uppercase;
-            color: #22C55E;
-            margin-bottom: 4px;
-        }
+        .option { padding: 14px 16px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { border-color: #1a1a2e; }
+        .option.selected { border-color: #1a1a2e; background: #f0f0f0; }
+        .btn { width: 100%; padding: 16px; background: #1a1a2e; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 20px; }
+        .btn:disabled { background: #ccc; }
+        .btn-secondary { background: transparent; color: #1a1a2e; border: 2px solid #1a1a2e; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -106,7 +43,7 @@
     </div>
     
     <script>
-        const project = {{ project | tojson | safe }};
+        const project = {"activity": [{"message": "Analyzed idea and generated 3 clarifying questions (real LLM call)", "role": "generator", "timestamp": "2026-07-30T03:45:40.722753"}, {"message": "Answers submitted, starting build via BuildLoopService", "role": "generator", "timestamp": "2026-07-30T03:45:40.739951"}, {"message": "Generated 4 acceptance criteria", "role": "system", "timestamp": "2026-07-30T03:45:41.744552"}, {"message": "Generated 495 chars of code", "role": "system", "timestamp": "2026-07-30T03:45:42.434781"}], "answers": {"q1": "Keyboard"}, "created_at": "2026-07-30T03:45:39.839464", "generated_code": "class Calculator:\n    def __init__(self):\n        pass\n\n    def add(self, a, b):\n        \"\"\"Return sum of a and b\"\"\"\n        return a + b\n\n    def subtract(self, a, b):\n        \"\"\"Return difference of a and b\"\"\"\n        return a - b\n\n    def multiply(self, a, b):\n        \"\"\"Return product of a and b\"\"\"\n        return a * b\n\n    def divide(self, a, b):\n        \"\"\"Return quotient of a divided by b\"\"\"\n        if b == 0:\n            raise ValueError(\"Cannot divide by zero\")\n        return a / b", "id": "proj_1", "idea_text": "A simple task manager app with add, complete, delete features", "name": "A simple task manager app with add, complete, dele...", "phase": "foundation", "questions": [{"default_value": "No categorization", "id": "q1", "options": ["No categorization", "Simple categorization (by tag or color)", "Advanced categorization (by category or project)"], "text": "What level of task categorization would be required?", "tier": "blocking", "type": "select", "why_it_matters": "To determine the complexity of the task management system."}, {"default_value": "No", "id": "q2", "options": ["Yes", "No"], "text": "Would you like to include task prioritization?", "tier": "auto_filled", "type": "toggle", "why_it_matters": "To decide whether to implement a drag-and-drop prioritization system."}, {"default_value": "No", "id": "q3", "options": ["Yes", "No"], "text": "Would you like to integrate calendar synchronization?", "tier": "auto_filled", "type": "toggle", "why_it_matters": "To decide whether to develop a calendar API integration."}], "status": "building", "updated_at": "2026-07-30T03:45:42.434791"};
         const questions = project.questions || [];
         let currentIndex = 0;
         let answers = {};

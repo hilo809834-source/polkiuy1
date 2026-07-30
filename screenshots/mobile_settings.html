@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - AI Dev Studio</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        .header { background: #1a1a2e; color: white; padding: 16px; position: sticky; top: 0; display: flex; align-items: center; gap: 12px; }
+        .back { color: white; text-decoration: none; font-size: 20px; }
+        .header h1 { font-size: 18px; }
+        .container { padding: 16px; }
+        .card { background: white; border-radius: 8px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .card-title { font-weight: 600; margin-bottom: 16px; color: #333; }
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+        .toggle-row:last-child { border-bottom: none; }
+        .toggle-label { font-size: 14px; color: #333; }
+        .toggle { width: 48px; height: 28px; background: #ddd; border-radius: 14px; position: relative; cursor: pointer; }
+        .toggle.active { background: #4caf50; }
+        .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; background: white; border-radius: 50%; transition: 0.2s; }
+        .toggle.active::after { left: 22px; }
+        .readonly-section { padding: 16px; background: #f5f5f5; border-radius: 8px; margin-top: 12px; }
+        .readonly-link { color: #1976d2; text-decoration: none; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/" class="back">←</a>
+        <h1>Settings</h1>
+    </div>
+    <div class="container">
+        <div class="card">
+            <div class="card-title">Notifications</div>
+            <div class="toggle-row">
+                <span class="toggle-label">Build complete</span>
+                <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+            </div>
+            <div class="toggle-row">
+                <span class="toggle-label">Build blocked</span>
+                <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+            </div>
+            <div class="toggle-row">
+                <span class="toggle-label">Deployment status</span>
+                <div class="toggle" onclick="this.classList.toggle('active')"></div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">Other Settings</div>
+            <div class="readonly-section">
+                <p style="font-size: 14px; color: #666; margin-bottom: 8px;">API Keys, Model Routing, Cost Caps, Integrations</p>
+                <a href="http://localhost:5000/settings" class="readonly-link">Edit on desktop →</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -32,11 +32,77 @@
     <input type="number" class="input mt-16" value="10.00">
 </div>
 
-<div class="card">
+<div class="card mb-24">
+    <h2 class="mb-16">Notifications</h2>
+    <div class="toggle-row">
+        <span>Build complete</span>
+        <input type="checkbox" checked class="toggle">
+    </div>
+    <div class="toggle-row">
+        <span>Blocked / needs input</span>
+        <input type="checkbox" checked class="toggle">
+    </div>
+    <div class="toggle-row">
+        <span>Deployment failed</span>
+        <input type="checkbox" checked class="toggle">
+    </div>
+    <div class="toggle-row">
+        <span>Cost cap approaching</span>
+        <input type="checkbox" class="toggle">
+    </div>
+</div>
+
+<div class="card mb-24">
     <h2 class="mb-16">Integrations</h2>
     <div class="flex items-center justify-between">
         <span>GitHub</span>
         <button class="btn btn-secondary">Connect</button>
     </div>
 </div>
+
+<div class="card">
+    <h2 class="mb-16">Billing</h2>
+    <div class="mb-16">
+        <span class="text-secondary">Plan: </span>
+        <strong>Free Tier</strong>
+    </div>
+    <div class="progress-bar mb-8">
+        <div class="progress-fill" style="width: 15%"></div>
+    </div>
+    <p class="text-secondary mb-16">$0.15 / $10.00 used this period</p>
+    <p class="text-secondary">Payment method: •••• 4242 <button class="btn btn-secondary" style="margin-left: 8px;">Update</button></p>
+</div>
+
+<style>
+.toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #2A2D33;
+}
+.toggle-row:last-child { border-bottom: none; }
+.toggle {
+    width: 48px;
+    height: 24px;
+    background: #2A2D33;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    appearance: none;
+}
+.toggle:checked { background: #22C55E; }
+.toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: #E8E9EB;
+    border-radius: 50%;
+    transition: 0.2s;
+}
+.toggle:checked::after { left: 26px; }
+</style>
 {% endblock %}

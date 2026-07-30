@@ -12,6 +12,7 @@
     <div class="tab" data-tab="diffs">Diffs</div>
     <div class="tab" data-tab="tests">Tests</div>
     <div class="tab" data-tab="cost">Cost</div>
+    <div class="tab" data-tab="deploy">Deploy</div>
 </div>
 
 <div id="tab-content">
@@ -56,6 +57,34 @@
             <div class="progress-fill" style="width: 0%"></div>
         </div>
         <p class="text-secondary mt-16">$0.00 spent of $10.00 cap</p>
+    </div>
+    
+    <div class="tab-panel" id="panel-deploy" style="display: none;">
+        <div class="flex gap-16">
+            <div class="card" style="flex: 1;">
+                <h2 class="mb-16">Staging</h2>
+                <div class="flex justify-between items-center mb-16">
+                    <span class="badge badge-success">Deployed</span>
+                    <span class="text-secondary">v1.0.0</span>
+                </div>
+                <p class="text-secondary mb-16">Last deployed: just now</p>
+                <button class="btn" disabled>Deploy latest</button>
+            </div>
+            <div class="card" style="flex: 1;">
+                <h2 class="mb-16">Production</h2>
+                <div class="flex justify-between items-center mb-16">
+                    <span class="badge badge-warning">Not deployed</span>
+                    <span class="text-secondary">-</span>
+                </div>
+                <p class="text-secondary mb-16">No production deployment yet</p>
+                <button class="btn btn-secondary" disabled title="Deploy to staging first">Deploy to production</button>
+            </div>
+        </div>
+        <div class="card mt-24">
+            <h2 class="mb-16">Rollback</h2>
+            <p class="text-secondary mb-16">No previous versions available for rollback.</p>
+            <button class="btn btn-secondary" disabled>Roll back</button>
+        </div>
     </div>
 </div>
 
