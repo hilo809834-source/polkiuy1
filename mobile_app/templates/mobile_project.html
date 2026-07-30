@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ project.name }} - AI Dev Studio</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        .header { background: #1a1a2e; color: white; padding: 16px; position: sticky; top: 0; display: flex; align-items: center; gap: 12px; }
+        .back { color: white; text-decoration: none; font-size: 20px; }
+        .header h1 { font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .container { padding: 16px; }
+        
+        /* Phase stepper */
+        .stepper { display: flex; justify-content: space-between; margin-bottom: 24px; background: white; padding: 16px; border-radius: 8px; }
+        .step { text-align: center; flex: 1; position: relative; }
+        .step::after { content: ''; position: absolute; top: 12px; left: 50%; width: 100%; height: 2px; background: #ddd; }
+        .step:last-child::after { display: none; }
+        .step.done::after { background: #4caf50; }
+        .step.active::after { background: linear-gradient(to right, #4caf50 0%, #ddd 0%); }
+        .step-circle { width: 24px; height: 24px; border-radius: 50%; background: #ddd; margin: 0 auto 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white; position: relative; z-index: 1; }
+        .step.done .step-circle { background: #4caf50; }
+        .step.active .step-circle { background: #1a1a2e; }
+        .step-label { font-size: 11px; color: #666; }
+        
+        /* Activity card */
+        .card { background: white; border-radius: 8px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .card-title { font-weight: 600; margin-bottom: 12px; color: #333; }
+        .activity-item { padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-msg { font-size: 14px; color: #333; }
+        .activity-time { font-size: 11px; color: #999; margin-top: 4px; }
+        
+        /* Stats */
+        .stats { display: flex; gap: 12px; margin-bottom: 16px; }
+        .stat { flex: 1; background: white; padding: 16px; border-radius: 8px; text-align: center; }
+        .stat-value { font-size: 24px; font-weight: 700; color: #1a1a2e; }
+        .stat-label { font-size: 12px; color: #666; margin-top: 4px; }
+        
+        /* Cost bar */
+        .cost-bar { height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; margin-top: 8px; }
+        .cost-fill { height: 100%; background: #4caf50; border-radius: 4px; }
+        .cost-fill.warning { background: #ff9800; }
+        .cost-fill.danger { background: #f44336; }
+        
+        /* Desktop link */
+        .desktop-link { display: block; text-align: center; padding: 16px; color: #1976d2; text-decoration: none; font-size: 14px; }
+        
+        /* Refresh */
+        .refresh-btn { position: fixed; bottom: 24px; right: 24px; width: 48px; height: 48px; background: white; border: none; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: pointer; font-size: 20px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/" class="back">←</a>
+        <h1>{{ project.name }}</h1>
+    </div>
+    <div class="container">
+        <!-- Phase stepper -->
+        <div class="stepper">
+            <div class="step {% if project.phase in ['intake', 'foundation', 'building', 'done'] %}done{% endif %} {% if project.phase == 'intake' %}active{% endif %}">
+                <div class="step-circle">1</div>
+                <div class="step-label">Idea</div>
+            </div>
+            <div class="step {% if project.phase in ['foundation', 'building', 'done'] %}done{% endif %} {% if project.phase == 'foundation' %}active{% endif %}">
+                <div class="step-circle">2</div>
+                <div class="step-label">Spec</div>
+            </div>
+            <div class="step {% if project.phase in ['building', 'done'] %}done{% endif %} {% if project.phase == 'building' %}active{% endif %}">
+                <div class="step-circle">3</div>
+                <div class="step-label">Build</div>
+            </div>
+            <div class="step {% if project.phase == 'done' %}done active{% endif %}">
+                <div class="step-circle">4</div>
+                <div class="step-label">Done</div>
+            </div>
+        </div>
+        
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">{{ project.activity|length }}</div>
+                <div class="stat-label">Activities</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">{{ project.test_results|length if project.test_results else 0 }}</div>
+                <div class="stat-label">Tests</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">$0.00</div>
+                <div class="stat-label">Spent</div>
+            </div>
+        </div>
+        
+        <!-- Latest activity -->
+        <div class="card">
+            <div class="card-title">Latest Activity</div>
+            {% if project.activity %}
+            <div class="activity-item">
+                <div class="activity-msg">{{ project.activity[-1].message }}</div>
+                <div class="activity-time">{{ project.activity[-1].timestamp }}</div>
+            </div>
+            {% else %}
+            <p style="color: #666; font-size: 14px;">No activity yet</p>
+            {% endif %}
+        </div>
+        
+        <!-- Open on desktop -->
+        <a href="http://localhost:5000/project/{{ project.id }}" class="desktop-link">
+            Open full workspace on desktop →
+        </a>
+    </div>
+    
+    <button class="refresh-btn" onclick="location.reload()">↻</button>
+    
+    <script>
+        // Auto-refresh every 5 seconds
+        setTimeout(() => location.reload(), 5000);
+    </script>
+</body>
+</html>

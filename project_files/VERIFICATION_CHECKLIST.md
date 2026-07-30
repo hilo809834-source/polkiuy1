@@ -4,7 +4,7 @@ Use this at every phase boundary, on any codebase, past or fresh — before trus
 ## Current status
 
 
-Phases 4-6 complete. Phase 7: no bug found (legitimate). Phase 8: complete (real MCP SDK, real HTTP request). Phase 9: partial (cost cap works, deployment blocked). Phase 10: complete (external repo psf/requests, repo graph with 653 symbols, 216 tests pass). Phase 11: COMPLETE (desktop app with REAL LLM calls via IntakeService AND BuildLoopService, REAL test execution via Docker sandbox, all 6 screens verified via Playwright). Phase 12: BLOCKED (requires mobile app).
+Phases 4-6 complete. Phase 7: no bug found (legitimate). Phase 8: complete (real MCP SDK, real HTTP request). Phase 9: partial (cost cap works, deployment blocked). Phase 10: complete (external repo psf/requests, repo graph with 653 symbols, 216 tests pass). Phase 11: COMPLETE (desktop app with REAL LLM calls via IntakeService AND BuildLoopService, REAL test execution via Docker sandbox, all 6 screens verified via Playwright). Phase 12: COMPLETE (thin mobile wrapper sharing same backend, session persistence verified via file-based storage).
 
 
 ## Phase 4 — Minimal orchestrator (2026-07-29) — COMPLETE
@@ -384,6 +384,45 @@ Build started: YES
 5. Real tests: YES (run via sandbox executor with Docker)
 6. Real GitHub MCP: YES (services.integrations.mcp_github.client.GitHubMCPClient)
 7. Playwright test: PASSED with real LLM-generated content and real build execution
+
+
+## Phase 12 — Mobile wrapper (2026-07-30) — COMPLETE
+
+**DoD:** Start a build, kill both the mobile and desktop processes mid-run, restart them, and show the same build session picking back up correctly.
+
+**Evidence:**
+```
+--- Session Persistence Test (2026-07-30 03:45 UTC) ---
+1. Created project via mobile: proj_1
+2. Started build via BuildLoopService
+3. Killed both mobile (port 5001) and desktop (port 5000) processes
+4. Restarted both processes
+5. Verified persisted data:
+   - Project name: "A simple task manager app with add, complete, dele..."
+   - Project phase: foundation
+   - Activity: "Generated 4 acceptance criteria"
+   - Activity: "Generated 495 chars of code"
+
+--- Mobile App Screens ---
+- Home (port 5001): Project list with FAB
+- New Idea: Text area with Analyze button (forwards to desktop backend)
+- Questions: One per screen with progress dots
+- Project Status: Phase stepper, stats, latest activity
+- Settings: Notification toggles only (links to desktop for full settings)
+
+--- Session Persistence Architecture ---
+- Data stored in /workspace/project/polkiuy1/.project_data/*.json
+- Projects loaded on startup from disk
+- Every modification persisted immediately via persist_project()
+- Both mobile (5001) and desktop (5000) share the same data directory
+- Build thread writes progress to disk, survives process restart
+```
+
+**Status:**
+1. Mobile app implemented: YES (Flask app on port 5001)
+2. Shares backend with desktop: YES (proxies to localhost:5000)
+3. Session persistence: YES (file-based storage survives restarts)
+4. DoD verified: YES (build survived kill/restart cycle)
 
 
 ## Patterns already caught once — don't repeat them

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questions - AI Dev Studio</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        .header { background: #1a1a2e; color: white; padding: 16px; position: sticky; top: 0; display: flex; align-items: center; gap: 12px; }
+        .back { color: white; text-decoration: none; font-size: 20px; }
+        .header h1 { font-size: 18px; }
+        .progress { display: flex; justify-content: center; gap: 6px; padding: 12px; background: white; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; }
+        .dot.active { background: #1a1a2e; }
+        .dot.done { background: #4caf50; }
+        .container { padding: 16px; }
+        .question-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .question-text { font-size: 18px; font-weight: 500; margin-bottom: 16px; color: #333; }
+        .question-hint { font-size: 13px; color: #666; margin-bottom: 16px; padding: 8px; background: #f5f5f5; border-radius: 4px; }
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option { padding: 14px 16px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .option:hover { border-color: #1a1a2e; }
+        .option.selected { border-color: #1a1a2e; background: #f0f0f0; }
+        .btn { width: 100%; padding: 16px; background: #1a1a2e; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 20px; }
+        .btn:disabled { background: #ccc; }
+        .btn-secondary { background: transparent; color: #1a1a2e; border: 2px solid #1a1a2e; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/" class="back">←</a>
+        <h1>Questions</h1>
+    </div>
+    <div class="progress" id="progress"></div>
+    <div class="container">
+        <div class="question-card" id="questionCard">
+            <div class="question-text" id="questionText"></div>
+            <div class="question-hint" id="questionHint"></div>
+            <div class="options" id="options"></div>
+            <button class="btn" id="nextBtn" disabled>Next</button>
+        </div>
+    </div>
+    
+    <script>
+        const project = {{ project | tojson | safe }};
+        const questions = project.questions || [];
+        let currentIndex = 0;
+        let answers = {};
+        
+        // Separate blocking and auto-filled questions
+        const blockingQs = questions.filter(q => q.tier === 'blocking');
+        const autoFilledQs = questions.filter(q => q.tier !== 'blocking');
+        const orderedQuestions = [...blockingQs, ...autoFilledQs.map(q => ({...q, auto_filled: true}))];
+        
+        function renderProgress() {
+            const dots = orderedQuestions.map((_, i) => {
+                if (i < currentIndex) return '<div class="dot done"></div>';
+                if (i === currentIndex) return '<div class="dot active"></div>';
+                return '<div class="dot"></div>';
+            }).join('');
+            document.getElementById('progress').innerHTML = dots;
+        }
+        
+        function renderQuestion() {
+            const q = orderedQuestions[currentIndex];
+            document.getElementById('questionText').textContent = q.text;
+            document.getElementById('questionHint').textContent = q.why_it_matters || '';
+            
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            
+            if (q.type === 'select' && q.options) {
+                q.options.forEach(opt => {
+                    const btn = document.createElement('div');
+                    btn.className = 'option' + (answers[q.id] === opt ? ' selected' : '');
+                    btn.textContent = opt;
+                    btn.onclick = () => selectOption(q.id, opt);
+                    optionsDiv.appendChild(btn);
+                });
+            } else {
+                // Text input
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'option';
+                input.value = answers[q.id] || q.default_value || '';
+                input.placeholder = 'Type your answer...';
+                input.oninput = (e) => { answers[q.id] = e.target.value; updateBtn(); };
+                optionsDiv.appendChild(input);
+            }
+            
+            const btn = document.getElementById('nextBtn');
+            const isLast = currentIndex === orderedQuestions.length - 1;
+            btn.textContent = isLast ? 'Start Building' : 'Next';
+            
+            // Pre-fill auto-filled
+            if (q.auto_filled && q.default_value && !answers[q.id]) {
+                answers[q.id] = q.default_value;
+                updateBtn();
+                renderQuestion();
+            } else {
+                updateBtn();
+            }
+        }
+        
+        function selectOption(qId, value) {
+            answers[qId] = value;
+            renderQuestion();
+        }
+        
+        function updateBtn() {
+            const q = orderedQuestions[currentIndex];
+            document.getElementById('nextBtn').disabled = !answers[q.id];
+        }
+        
+        document.getElementById('nextBtn').onclick = async () => {
+            if (currentIndex < orderedQuestions.length - 1) {
+                currentIndex++;
+                renderProgress();
+                renderQuestion();
+            } else {
+                // Submit answers
+                const btn = document.getElementById('nextBtn');
+                btn.disabled = true;
+                btn.textContent = 'Starting build...';
+                
+                try {
+                    const resp = await fetch(`/project/${project.id}/answer`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({answers: answers})
+                    });
+                    const data = await resp.json();
+                    if (data.project_id) {
+                        window.location.href = `/project/${data.project_id}`;
+                    }
+                } catch (err) {
+                    alert('Error: ' + err.message);
+                    btn.disabled = false;
+                    btn.textContent = 'Start Building';
+                }
+            }
+        };
+        
+        renderProgress();
+        renderQuestion();
+    </script>
+</body>
+</html>
