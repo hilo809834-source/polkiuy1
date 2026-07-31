@@ -29,9 +29,6 @@ jobs:
               "type": "web_service",
               "name": "ai-dev-studio",
               "ownerId": os.environ["RENDER_OWNER_ID"],
-              "repo": "https://github.com/hilo809834-source/polkiuy1",
-              "branch": "main",
-              "autoDeploy": "yes",
               "region": "oregon",
               "plan": "free",
               "serviceDetails": {
