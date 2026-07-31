@@ -48,7 +48,7 @@ async def run_phase10_dod():
     print("PHASE 10 - EXISTING CODEBASES")
     print("=" * 70)
     
-    api_key = "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"
+    api_key = "os.environ.get("GROQ_API_KEY", "")"
     
     # Step 1: Use existing repo
     print("\n[1] Analyzing existing repo...")
