@@ -1,0 +1,28 @@
+# Render Blueprint for AI Dev Studio Platform
+
+services:
+  # Desktop App (Main Web Service)
+  - name: ai-dev-studio
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn desktop_app.app:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120
+    healthCheckPath: /
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: PORT
+        value: "10000"
+    
+  # Mobile App (Secondary Web Service)
+  - name: ai-dev-studio-mobile
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn mobile_app.app:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: "10001"
