@@ -25,6 +25,7 @@ jobs:
           import os
           import urllib.request
 
+          # Try minimal payload first
           payload = {
               "type": "web_service",
               "name": "ai-dev-studio",
@@ -34,13 +35,9 @@ jobs:
               "autoDeploy": "yes",
               "region": "oregon",
               "plan": "free",
-              "envSpecificDetails": {"runtime": "python"},
-              "serviceDetails": {
-                  "buildCommand": "pip install -r requirements.txt",
-                  "startCommand": "cd desktop_app && python app.py",
-                  "healthCheckPath": "/",
-                  "numInstances": 1
-              }
+              "runtime": "python",
+              "buildCommand": "pip install -r requirements.txt",
+              "startCommand": "cd desktop_app && python app.py"
           }
 
           print(f"Payload: {json.dumps(payload, indent=2)}")
