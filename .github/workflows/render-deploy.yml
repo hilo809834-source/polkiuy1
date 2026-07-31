@@ -25,23 +25,26 @@ jobs:
             -H "Content-Type: application/json" \
             -H "Accept: application/json" \
             -d '{
-              "service": {
-                "name": "ai-dev-studio",
-                "type": "web_service",
-                "runtime": "python",
-                "region": "oregon",
-                "plan": "free",
-                "serviceDetails": {
-                  "buildCommand": "pip install -r requirements.txt",
-                  "startCommand": "cd desktop_app && python app.py",
-                  "healthCheckPath": "/",
-                  "numInstances": 1
-                }
-              },
+              "type": "web_service",
+              "name": "ai-dev-studio",
               "ownerId": "${{ inputs.render_owner_id }}",
               "repo": "https://github.com/hilo809834-source/polkiuy1",
               "branch": "main",
-              "autoDeploy": "yes"
+              "autoDeploy": "yes",
+              "runtime": "python",
+              "region": "oregon",
+              "plan": "free",
+              "envDetails": {
+                "envVars": [
+                  {"key": "PYTHON_VERSION", "value": "3.11"}
+                ]
+              },
+              "serviceDetails": {
+                "buildCommand": "pip install -r requirements.txt",
+                "startCommand": "cd desktop_app && python app.py",
+                "healthCheckPath": "/",
+                "numInstances": 1
+              }
             }'
         env:
           RENDER_API_KEY: ${{ inputs.render_api_key }}
