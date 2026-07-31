@@ -24,16 +24,24 @@ jobs:
             -H "Authorization: Bearer ${{ inputs.render_api_key }}" \
             -H "Content-Type: application/json" \
             -H "Accept: application/json" \
-            --data-raw '{
-              "type": "web_service",
-              "name": "ai-dev-studio",
+            -d '{
+              "service": {
+                "name": "ai-dev-studio",
+                "type": "web_service",
+                "runtime": "python",
+                "region": "oregon",
+                "plan": "free",
+                "serviceDetails": {
+                  "buildCommand": "pip install -r requirements.txt",
+                  "startCommand": "cd desktop_app && python app.py",
+                  "healthCheckPath": "/",
+                  "numInstances": 1
+                }
+              },
               "ownerId": "${{ inputs.render_owner_id }}",
               "repo": "https://github.com/hilo809834-source/polkiuy1",
               "branch": "main",
-              "autoDeploy": "yes",
-              "runtime": "python",
-              "buildCommand": "pip install -r requirements.txt",
-              "startCommand": "cd desktop_app && python app.py"
+              "autoDeploy": "yes"
             }'
         env:
           RENDER_API_KEY: ${{ inputs.render_api_key }}
