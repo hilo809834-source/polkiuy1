@@ -20,11 +20,46 @@ jobs:
 
       - name: Deploy to Render
         run: |
-          curl -s -X POST "https://api.render.com/v1/services" \
-            -H "Authorization: Bearer ${{ inputs.render_api_key }}" \
-            -H "Content-Type: application/json" \
-            -H "Accept: application/json" \
-            -d '{"type":"web_service","name":"ai-dev-studio","ownerId":"'"${{ inputs.render_owner_id }}"'","repo":"https://github.com/hilo809834-source/polkiuy1","branch":"main","autoDeploy":"yes","region":"oregon","plan":"free","envSpecificDetails":{"runtime":"python"},"serviceDetails":{"buildCommand":"pip install -r requirements.txt","startCommand":"cd desktop_app && python app.py","healthCheckPath":"/","numInstances":1}}'
+          python3 << 'PYEOF'
+          import json
+          import os
+          import urllib.request
+
+          payload = {
+              "type": "web_service",
+              "name": "ai-dev-studio",
+              "ownerId": os.environ["RENDER_OWNER_ID"],
+              "repo": "https://github.com/hilo809834-source/polkiuy1",
+              "branch": "main",
+              "autoDeploy": "yes",
+              "region": "oregon",
+              "plan": "free",
+              "envSpecificDetails": {"runtime": "python"},
+              "serviceDetails": {
+                  "buildCommand": "pip install -r requirements.txt",
+                  "startCommand": "cd desktop_app && python app.py",
+                  "healthCheckPath": "/",
+                  "numInstances": 1
+              }
+          }
+
+          data = json.dumps(payload).encode("utf-8")
+          req = urllib.request.Request(
+              "https://api.render.com/v1/services",
+              data=data,
+              headers={
+                  "Authorization": f"Bearer {os.environ['RENDER_API_KEY']}",
+                  "Content-Type": "application/json",
+                  "Accept": "application/json"
+              },
+              method="POST"
+          )
+
+          with urllib.request.urlopen(req) as response:
+              result = response.read().decode("utf-8")
+              print(f"Response: {result}")
+
+          PYEOF
         env:
           RENDER_API_KEY: ${{ inputs.render_api_key }}
           RENDER_OWNER_ID: ${{ inputs.render_owner_id }}
