@@ -1,0 +1,46 @@
+name: Deploy to Render
+
+on:
+  workflow_dispatch:
+    inputs:
+      render_api_key:
+        description: 'Render API Key'
+        required: true
+        type: string
+      render_owner_id:
+        description: 'Render Owner ID'
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Render
+        run: |
+          curl -s -X POST "https://api.render.com/v1/services" \
+            -H "Authorization: Bearer ${{ inputs.render_api_key }}" \
+            -H "Content-Type: application/json" \
+            -H "Accept: application/json" \
+            --data-raw '{
+              "type": "web_service",
+              "name": "ai-dev-studio",
+              "ownerId": "${{ inputs.render_owner_id }}",
+              "repo": "https://github.com/hilo809834-source/polkiuy1",
+              "branch": "main",
+              "autoDeploy": "yes",
+              "runtime": "python",
+              "buildCommand": "pip install -r requirements.txt",
+              "startCommand": "cd desktop_app && python app.py"
+            }'
+        env:
+          RENDER_API_KEY: ${{ inputs.render_api_key }}
+          RENDER_OWNER_ID: ${{ inputs.render_owner_id }}
+
+      - name: List Services
+        run: |
+          curl -s "https://api.render.com/v1/services" \
+            -H "Authorization: Bearer ${{ inputs.render_api_key }}" \
+            -H "Accept: application/json"
