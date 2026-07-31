@@ -25,15 +25,19 @@ jobs:
           import os
           import urllib.request
 
+          # Try creating a static site first
           payload = {
-              "type": "web_service",
+              "type": "static_site",
               "name": "ai-dev-studio",
               "ownerId": os.environ["RENDER_OWNER_ID"],
-              "region": "oregon",
-              "plan": "free",
-              "serviceDetails": {
-                  "buildCommand": "pip install -r requirements.txt",
-                  "startCommand": "cd desktop_app && python app.py"
+              "repo": "https://github.com/hilo809834-source/polkiuy1",
+              "branch": "main",
+              "buildCommand": "echo 'Static site - no build needed'",
+              "staticSitesDetails": {
+                  "buildCommand": "echo 'Static site - no build needed'",
+                  "outputDirectory": ".",
+                  "redirects": [],
+                  "rewrites": []
               }
           }
 
