@@ -34,7 +34,6 @@ jobs:
               "autoDeploy": "yes",
               "region": "oregon",
               "plan": "free",
-              "runtime": "python",
               "serviceDetails": {
                   "buildCommand": "pip install -r requirements.txt",
                   "startCommand": "cd desktop_app && python app.py"
