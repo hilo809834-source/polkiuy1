@@ -11,7 +11,7 @@ sys.path.insert(0, '/workspace/project/polkiuy1')
 from mobile_app.data_store import load_all_projects, load_project, save_project
 
 app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), 'templates'))
-app.secret_key = 'mobile-secret-key'
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', os.urandom(32).hex())
 
 # Load persisted projects on startup
 projects = load_all_projects()
