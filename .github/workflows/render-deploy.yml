@@ -20,32 +20,36 @@ jobs:
 
       - name: Deploy to Render
         run: |
+          PAYLOAD=$(cat <<'EOF'
+          {
+            "type": "web_service",
+            "name": "ai-dev-studio",
+            "ownerId": "${{ inputs.render_owner_id }}",
+            "repo": "https://github.com/hilo809834-source/polkiuy1",
+            "branch": "main",
+            "autoDeploy": "yes",
+            "runtime": "python",
+            "region": "oregon",
+            "plan": "free",
+            "envDetails": {
+              "envVars": [
+                {"key": "PYTHON_VERSION", "value": "3.11"}
+              ]
+            },
+            "serviceDetails": {
+              "buildCommand": "pip install -r requirements.txt",
+              "startCommand": "cd desktop_app && python app.py",
+              "healthCheckPath": "/",
+              "numInstances": 1
+            }
+          }
+          EOF
+          )
           curl -s -X POST "https://api.render.com/v1/services" \
             -H "Authorization: Bearer ${{ inputs.render_api_key }}" \
             -H "Content-Type: application/json" \
             -H "Accept: application/json" \
-            -d '{
-              "type": "web_service",
-              "name": "ai-dev-studio",
-              "ownerId": "${{ inputs.render_owner_id }}",
-              "repo": "https://github.com/hilo809834-source/polkiuy1",
-              "branch": "main",
-              "autoDeploy": "yes",
-              "runtime": "python",
-              "region": "oregon",
-              "plan": "free",
-              "envDetails": {
-                "envVars": [
-                  {"key": "PYTHON_VERSION", "value": "3.11"}
-                ]
-              },
-              "serviceDetails": {
-                "buildCommand": "pip install -r requirements.txt",
-                "startCommand": "cd desktop_app && python app.py",
-                "healthCheckPath": "/",
-                "numInstances": 1
-              }
-            }'
+            -d "$PAYLOAD"
         env:
           RENDER_API_KEY: ${{ inputs.render_api_key }}
           RENDER_OWNER_ID: ${{ inputs.render_owner_id }}
